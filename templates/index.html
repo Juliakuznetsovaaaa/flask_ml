@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Grid</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
+
+
+
+</head>
+<body>
+    <main>
+        <div class="title">
+            <h1>Выявление остеогенной дифференцировки</h1>
+            <h2>В клеточных колониях на основе F-актина</h2>
+        </div>
+        <div class="info-block">
+            <div class="upload-block" id="uploadBlock">
+                <img class="upload-icon" src="../static/upload_icon.svg">
+                <p class="upload-title">Загрузите изображение</p>
+                <p class="upload-subtitle">Выберите файл</p>
+             <input type="file" id="fileInput" accept="image/*" style="display: none"/>
+            </div>
+            <div class="answer-block">
+                <img class="answer-img" id="answer-img">
+                <p class="answer-text" id="answer-text"></p>
+                <p class="answer-accuracy" id="answer-accuracy"></p>
+            </div>
+        </div>
+        <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Обрабатываем изображение...</p>
+            <p style="font-size: 14px; color: #666;">Пожалуйста, подождите</p>
+        </div>
+    </div>
+    </main>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>     
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+     <script>
+        // Функция для проверки видимости answer-block
+       function checkAnswerBlockVisibility() {
+            const answerBlock = document.querySelector('.answer-block');
+            const uploadBlock = document.querySelector('.upload-block');
+            
+            // Используем getComputedStyle для чтения фактических стилей
+            const computedStyle = window.getComputedStyle(answerBlock);
+            
+            if (computedStyle.visibility === 'hidden') {
+                uploadBlock.classList.add('is-centered-absolute');
+            } else {
+                uploadBlock.classList.remove('is-centered-absolute');
+            }
+        }
+
+        // Наблюдатель за изменениями computed стилей
+        const observer = new MutationObserver(function(mutations) {
+            checkAnswerBlockVisibility();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const answerBlock = document.querySelector('.answer-block');
+            
+            // Начальная проверка
+            checkAnswerBlockVisibility();
+            
+            // Запуск наблюдателя
+            observer.observe(answerBlock, {
+                attributes: true,
+                attributeFilter: ['style', 'class'] // отслеживаем изменения стилей и классов
+            });
+        });
+    </script>
+</body>
+</html>

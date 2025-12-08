@@ -1,0 +1,27 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv
+.env
+.git/
+.gitignore
+README.md
+*.log
+*.sqlite
+.DS_Store
+.vscode/
+.idea/
+*.md
+test*
+.gitlab-ci.yml
+.github/
+.dockerignore
+*.h5  # если модель очень большая
+*.pkl
+*.pth
+*.pt
+*.onnx
