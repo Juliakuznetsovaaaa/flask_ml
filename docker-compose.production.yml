@@ -1,0 +1,26 @@
+# docker-compose.local.yml
+version: '3.8'
+
+services:
+  ml-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./app:/app/app
+      - ./static:/app/static
+      - ./templates:/app/templates
+      - ./tests:/app/tests
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - PYTHONUNBUFFERED=1
+    develop:
+      watch:
+        - action: sync
+          path: ./app
+          target: /app/app
+        - action: rebuild
+          path: ./requirements.txt

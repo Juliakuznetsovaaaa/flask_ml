@@ -1,0 +1,35 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Test Frontend</title>
+            <script>
+                async function testFrontend() {
+                    const baseUrl = 'http://localhost:5000';
+                    
+                    // Тестируем доступность endpoints
+                    const endpoints = [
+                        { url: baseUrl + '/', name: 'Главная' },
+                        { url: baseUrl + '/health', name: 'Health' }
+                    ];
+                    
+                    for (const endpoint of endpoints) {
+                        try {
+                            const response = await fetch(endpoint.url);
+                            console.log(`${endpoint.name}: ${response.status}`);
+                        } catch (error) {
+                            console.error(`${endpoint.name}: ${error.message}`);
+                        }
+                    }
+                }
+                
+                // Запускаем тест при загрузке
+                window.onload = testFrontend;
+            </script>
+        </head>
+        <body>
+            <h1>Тест фронтенда Flask ML приложения</h1>
+            <div id="results"></div>
+        </body>
+        </html>
+        

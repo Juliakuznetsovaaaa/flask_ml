@@ -1,0 +1,100 @@
+# Makefile.local
+.PHONY: help install run run-docker test lint deploy-local clean
+
+# Переменные для локального использования
+PORT = 5000
+HOST = localhost
+
+help:
+	@echo "Доступные команды для локальной разработки:"
+	@echo "  install     - Установка зависимостей"
+	@echo "  run         - Запуск приложения локально"
+	@echo "  run-docker  - Запуск в Docker контейнере"
+	@echo "  test        - Запуск всех тестов"
+	@echo "  test-api    - Запуск API тестов"
+	@echo "  lint        - Проверка качества кода"
+	@echo "  deploy-local- Деплой и проверка на localhost"
+	@echo "  clean       - Очистка"
+
+install:
+	pip install -r requirements.txt
+	pip install pytest pytest-cov flake8 black pylint
+
+run:
+	FLASK_ENV=development python run.py
+
+run-docker:
+	docker-compose -f docker-compose.local.yml up --build
+
+test:
+	python -m pytest tests/ -v --cov=app --cov-report=term-missing
+
+test-api:
+	python -m pytest tests/api/ -v
+
+lint:
+	flake8 .
+	black --check .
+	pylint app/
+
+deploy-local: build-local run-local-test validate-local
+
+build-local:
+	docker build -t flask-ml-app:local -f Dockerfile.local .
+
+run-local-test:
+	@echo "🚀 Запуск контейнера на localhost..."
+	docker run -d --name ml-app-local -p $(PORT):5000 flask-ml-app:local
+	sleep 15
+	@echo "✅ Контейнер запущен на http://$(HOST):$(PORT)"
+
+validate-local:
+	@echo "🔍 Проверка деплоя на localhost..."
+	python -c "
+import requests
+import sys
+import json
+
+def check_endpoint(url, name):
+    try:
+        response = requests.get(url, timeout=10)
+        if response.status_code == 200:
+            print(f'✅ {name}: доступен (200 OK)')
+            if 'application/json' in response.headers.get('content-type', ''):
+                data = response.json()
+                print(f'   Ответ: {json.dumps(data, indent=2)}')
+            return True
+        else:
+            print(f'❌ {name}: недоступен ({response.status_code})')
+            return False
+    except Exception as e:
+        print(f'❌ {name}: ошибка - {e}')
+        return False
+
+# Проверяем основные endpoints
+base_url = 'http://$(HOST):$(PORT)'
+endpoints = [
+    ('/', 'Главная страница'),
+    ('/health', 'Health endpoint'),
+]
+
+all_ok = True
+for endpoint, name in endpoints:
+    if not check_endpoint(f'{base_url}{endpoint}', name):
+        all_ok = False
+
+if all_ok:
+    print('\\n🎉 Все endpoints доступны!')
+    print(f'🌐 Приложение работает на: http://$(HOST):$(PORT)')
+    print('📊 Проверьте интерфейс в браузере')
+else:
+    print('\\n⚠️  Некоторые endpoints недоступны')
+    sys.exit(1)
+"
+
+clean:
+	docker stop ml-app-local || true
+	docker rm ml-app-local || true
+	docker rmi flask-ml-app:local || true
+	find . -type f -name "*.pyc" -delete
+	find . -type d -name "__pycache__" -delete
