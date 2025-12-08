@@ -16,14 +16,14 @@ def run_tests(test_category=None):
     }
     
     if test_category and test_category not in test_categories:
-        print(f"❌ Неизвестная категория тестов: {test_category}")
+        print(f"Неизвестная категория тестов: {test_category}")
         print(f"   Доступные категории: {', '.join(test_categories.keys())}")
         return False
     
     test_path = test_categories.get(test_category, 'tests/')
     
-    print(f"🔧 Запуск тестов: {test_category or 'all'}")
-    print(f"📁 Путь: {test_path}")
+    print(f"Запуск тестов: {test_category or 'all'}")
+    print(f"Путь: {test_path}")
     print("-" * 50)
     
     cmd = [
@@ -40,10 +40,10 @@ def run_tests(test_category=None):
     print("-" * 50)
     
     if result.returncode == 0:
-        print(f"✅ Тесты {test_category or 'all'} пройдены успешно!")
+        print(f"Тесты {test_category or 'all'} пройдены успешно!")
         return True
     else:
-        print(f"❌ Тесты {test_category or 'all'} провалены!")
+        print(f"Тесты {test_category or 'all'} провалены!")
         return False
 
 if __name__ == '__main__':
