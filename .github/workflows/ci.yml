@@ -129,6 +129,6 @@ except Exception as e:
     
     - name: Health check
       run: |
-        echo "Performing health check..."
+        echo "Performing health check."
         # Example health check
         # curl -f http://your-app-url/health || exit 1
