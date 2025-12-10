@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-12-10T13:46:15.100730",
+  "environment": "green",
+  "duration_seconds": 119.97,
+  "success": true,
+  "error": null,
+  "active_environment": "green",
+  "previous_environment": "blue",
+  "metrics": {
+    "deployments": 1,
+    "successful": 1,
+    "failed": 0,
+    "rollbacks": 0,
+    "avg_deployment_time": 119.9735004901886
+  },
+  "log_tail": []
+}

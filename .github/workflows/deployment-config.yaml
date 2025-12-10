@@ -1,0 +1,62 @@
+# Конфигурация Blue-Green деплоя
+deployment:
+  app_name: "flask-ml-app"
+  main_port: 5000
+  blue_port: 5001
+  green_port: 5002
+  
+  # Таймауты
+  health_check_timeout: 300  # 5 минут
+  model_validation_timeout: 60
+  graceful_shutdown_time: 30
+  
+  # Стратегии
+  strategies:
+    blue_green:
+      enabled: true
+      validation_required: true
+      auto_rollback: true
+      
+    canary:
+      enabled: false
+      percentage: 10
+      duration: 300
+      
+    rolling:
+      enabled: false
+      batch_size: 1
+      
+  # Валидация ML модели
+  model_validation:
+    endpoints:
+      - /api/model/validate
+      - /api/model/info
+      - /validate
+      
+    test_data:
+      path: "test_data/sample.json"
+      samples: 3
+      
+  # Мониторинг
+  monitoring:
+    prometheus_enabled: false
+    metrics_port: 9090
+    alert_thresholds:
+      response_time: 2.0  # секунд
+      error_rate: 0.01    # 1%
+      memory_usage: 0.8   # 80%
+      
+  # Резервные копии
+  backup:
+    enabled: true
+    keep_versions: 3
+    backup_dir: "/backups"
+    
+  # Уведомления
+  notifications:
+    slack:
+      enabled: false
+      webhook_url: ""
+    email:
+      enabled: false
+      recipients: []
